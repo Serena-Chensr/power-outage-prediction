@@ -25,3 +25,10 @@ Next, we addressed missing values. We devised an imputation strategy based on th
 *Bivariate Analysis and Interesting Aggregates:*
 
 We proceeded with the nine columns identified in the introduction. We separated them into categorical and numerical columns and applied one-hot encoding to the categorical variables. Afterward, we calculated correlation coefficients using a correlation matrix and selected the columns most strongly correlated with `CUSTOMERS.AFFECTED`. Surprisingly, `MONTH` was not among the top 10 factors correlated with `CUSTOMERS.AFFECTED`. To understand this, we conducted bivariate analysis, plotting scatter plots of the top correlated variables (`DEMAND.LOSS.MW`, `OUTAGE.DURATION`, and `CAUSE.CATEGORY_intentional attack`) against `CUSTOMERS.AFFECTED`, as well as a scatter plot of `MONTH` vs. `CUSTOMERS.AFFECTED`. We observed that `CUSTOMERS.AFFECTED` was evenly distributed throughout the year, confirming our correlation matrix findings. Moreover, we noticed that many of the top correlated variables, once encoded, represented specific cause categories. To explore this further, we created an aggregated groupby object by cause category and summed the number of affected customers, then visualized these results.
+
+<iframe
+  src="assets/map.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
