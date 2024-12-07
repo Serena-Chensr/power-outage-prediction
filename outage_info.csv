@@ -238,7 +238,7 @@
 237,2.0,2011.0,South,cold,-1,system operability disruption,1697,4000,1069730.0
 238,4.0,2006.0,South,normal,-0.2,system operability disruption,95,108,51404.0
 239,6.0,2012.0,South,normal,-0.1,severe weather,2220,920,175000.0
-240,,2000.0,South,,,equipment failure,,46,43000.0
+240,,2000.0,South,cold,,equipment failure,,46,43000.0
 241,12.0,2013.0,South,normal,-0.3,severe weather,7809,,881000.0
 242,4.0,2004.0,South,normal,0.1,severe weather,1200,100,85000.0
 243,4.0,2006.0,South,normal,-0.2,system operability disruption,121,260,68000.0
@@ -338,7 +338,7 @@
 337,6.0,2010.0,Central,normal,-0.4,system operability disruption,23187,500,
 338,1.0,2009.0,Central,cold,-0.7,severe weather,12240,506,75000.0
 339,6.0,2014.0,Southeast,normal,0,severe weather,390,217,65000.0
-340,,2000.0,Southeast,,,severe weather,,,160000.0
+340,,2000.0,Southeast,cold,,severe weather,,,160000.0
 341,12.0,2000.0,Southeast,cold,-0.8,severe weather,3264,,60000.0
 342,8.0,2000.0,Southeast,cold,-0.5,severe weather,1230,,75000.0
 343,7.0,2015.0,Southeast,warm,1.2,severe weather,803,366,111644.0
@@ -364,7 +364,7 @@
 363,8.0,2004.0,Central,warm,0.6,severe weather,1320,127,127000.0
 364,7.0,2011.0,Central,normal,-0.3,severe weather,1830,,169000.0
 365,7.0,2012.0,Central,normal,0.1,severe weather,3000,,320000.0
-366,,2000.0,Central,,,severe weather,,,11000.0
+366,,2000.0,Central,cold,,severe weather,,,11000.0
 367,7.0,2012.0,Central,normal,0.1,severe weather,870,,330000.0
 368,5.0,2008.0,Central,cold,-0.7,severe weather,810,,109000.0
 369,6.0,2013.0,Central,normal,-0.2,severe weather,1336,,283451.0
@@ -765,7 +765,7 @@
 764,12.0,2009.0,Southeast,warm,1.3,severe weather,1460,,47000.0
 765,1.0,2014.0,Southeast,cold,-0.5,severe weather,182,14435,
 766,8.0,2011.0,Southeast,cold,-0.6,severe weather,4113,,285465.0
-767,,2000.0,Southeast,,,severe weather,,175,50000.0
+767,,2000.0,Southeast,normal,,severe weather,,175,50000.0
 768,9.0,2008.0,Southeast,normal,-0.3,severe weather,885,,57000.0
 769,9.0,2003.0,Southeast,normal,0.2,severe weather,15,1655,320000.0
 770,6.0,2010.0,Southeast,normal,-0.4,system operability disruption,42,,4196.0
@@ -886,7 +886,7 @@
 885,9.0,2011.0,Northeast,cold,-0.8,intentional attack,0,0,0.0
 886,9.0,2011.0,Northeast,cold,-0.8,intentional attack,0,0,0.0
 887,8.0,2013.0,Northeast,normal,-0.3,intentional attack,1,,
-888,,2000.0,Northeast,,,system operability disruption,,,
+888,,2000.0,Northeast,cold,,system operability disruption,,,
 889,4.0,2012.0,Northeast,normal,-0.4,intentional attack,1,0,0.0
 890,3.0,2012.0,Northeast,normal,-0.4,intentional attack,0,0,0.0
 891,5.0,2013.0,Northeast,normal,-0.2,intentional attack,1,,
@@ -1317,7 +1317,7 @@
 1316,7.0,2004.0,Southeast,warm,0.5,severe weather,624,120,88110.0
 1317,7.0,2015.0,Southeast,warm,1.2,severe weather,2435,,52739.0
 1318,11.0,2003.0,Southeast,normal,0.3,severe weather,131,300,67000.0
-1319,,2000.0,Southeast,,,equipment failure,,143,37000.0
+1319,,2000.0,Southeast,cold,,equipment failure,,143,37000.0
 1320,12.0,2011.0,Southeast,cold,-0.9,severe weather,208,240,60000.0
 1321,1.0,2013.0,Southeast,normal,-0.4,severe weather,103,188,119000.0
 1322,1.0,2011.0,Southeast,cold,-1.3,severe weather,1355,600,150084.0
@@ -1505,7 +1505,7 @@
 1504,10.0,2012.0,Southwest,normal,0.3,intentional attack,201,0,0.0
 1505,10.0,2006.0,Southwest,warm,0.7,severe weather,2140,,65000.0
 1506,2.0,2012.0,Southwest,cold,-0.5,intentional attack,103,0,0.0
-1507,,2002.0,South,,,severe weather,,550,270000.0
+1507,,2002.0,South,normal,,severe weather,,550,270000.0
 1508,3.0,2015.0,South,warm,0.6,intentional attack,187,,
 1509,12.0,2015.0,South,warm,2.3,intentional attack,1406,0,0.0
 1510,4.0,2015.0,South,warm,0.7,severe weather,348,,70000.0
@@ -1514,11 +1514,11 @@
 1513,6.0,2011.0,South,normal,-0.3,public appeal,913,,
 1514,6.0,2015.0,South,warm,1,severe weather,,,110000.0
 1515,1.0,2005.0,South,warm,0.7,severe weather,14040,200,211000.0
-1516,12.0,2008.0,,cold,-0.7,severe weather,1367,1060,294000.0
-1517,5.0,2011.0,,normal,-0.4,severe weather,174,220,62000.0
-1518,10.0,2006.0,,warm,0.7,severe weather,543,110,59886.0
-1519,6.0,2006.0,,normal,0,system operability disruption,237,120,29300.0
-1520,10.0,2006.0,,warm,0.7,severe weather,1906,1170,291000.0
+1516,12.0,2008.0,South,cold,-0.7,severe weather,1367,1060,294000.0
+1517,5.0,2011.0,West,normal,-0.4,severe weather,174,220,62000.0
+1518,10.0,2006.0,Northeast,warm,0.7,severe weather,543,110,59886.0
+1519,6.0,2006.0,Northeast,normal,0,system operability disruption,237,120,29300.0
+1520,10.0,2006.0,Northeast,warm,0.7,severe weather,1906,1170,291000.0
 1521,7.0,2016.0,Northwest,normal,-0.3,system operability disruption,224,290,
 1522,12.0,2011.0,Northwest,cold,-0.9,intentional attack,0,0,0.0
 1523,6.0,2004.0,Northwest,normal,0.3,system operability disruption,95,157,35000.0
@@ -1529,7 +1529,7 @@
 1528,3.0,2016.0,Northwest,warm,1.6,intentional attack,,0,0.0
 1529,7.0,2016.0,Northwest,normal,-0.3,system operability disruption,220,485,
 1530,12.0,2011.0,West North Central,cold,-0.9,public appeal,720,155,34500.0
-1531,,2006.0,West North Central,,,fuel supply emergency,,1650,
+1531,,2006.0,West North Central,cold,,fuel supply emergency,,1650,
 1532,8.0,2009.0,West North Central,warm,0.5,islanding,59,84,
 1533,8.0,2009.0,West North Central,warm,0.5,islanding,181,373,
-1534,,2000.0,,,,equipment failure,,35,14273.0
+1534,,2000.0,Central,cold,,equipment failure,,35,14273.0
