@@ -18,6 +18,22 @@ This selection of columns, derived from the dataset and the attached screenshot,
 
 ## Data Cleaning
 
+Our data cleaning include the following steps:
+1. we drop irrelevant columns and only keeping the features we are inerested in. The interested columns include:
+| Variable name | Description |
+| ----------- | ----------- |
+| MONTH | Title |
+| YEAR | Text |
+| CLIMATE.REGION | Text |
+| CLIMATE.CATEGORY | Text |
+| CAUSE.CATEGORY | Text |
+| OUTAGE.DURATION | Text |
+| YEAR | Text |
+| YEAR | Text |
+| YEAR | Text |
+| YEAR | Text |
+
+
 During our data cleaning, we identified and removed two columns that lacked meaningful information: `Variables` (which contained only NaN values) and `OBS` (which duplicated the dataframe’s indices). We also merged related date and time columns. Specifically, `OUTAGE.START.DATE` and `OUTAGE.START.TIME` were combined into a single column capturing both the date and time of the outage’s start. Similarly, `OUTAGE.RESTORATION.DATE` and `OUTAGE.RESTORATION.TIME` were merged into a single column capturing the date and time when the outage was restored. We named these new columns `starttime_str` and `endtime_str` and dropped the original date/time columns to avoid multicollinearity. Using `pd.DataFrame`, we extracted the day and time from these combined columns.
 
 Next, we addressed missing values. We devised an imputation strategy based on the results of our exploratory analysis. After performing univariate analysis on categorical variables (e.g., `CLIMATE_REGION`, `CLIMATE.CATEGORY`), we found that their subcategories were relatively evenly distributed. Therefore, for categorical variables, we applied one-hot encoding and performed probabilistic imputation for missing values. For numerical variables (`MONTH`, `YEAR`, day, time), we also used probabilistic imputation. For other numerical variables, we first examined their distributions. If a variable was skewed, we used the median for imputation; if it was not skewed, we used the mean. We then created functions to classify numerical columns as neutral or skewed based on a skewness threshold of 1.0. Ultimately, our imputation approach involves selecting the top 30 features most correlated with `CUSTOMERS.AFFECTED` to guide imputation using the correlation matrix.
