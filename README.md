@@ -1,7 +1,8 @@
-# power-outage-prediction
+# Power Outage Influence Prediction
 This is a homework for EECS 398 at U-M
+By Serena Chen & Andy Guo
 
-**Step 1: Introduction**
+# Introduction
 
 The "Power Outages" dataset provides information on power outages from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (`variable` and `OBS`) and merging date and time fields (`OUTAGE.RESTORATION.DATE`, `OUTAGE.RESTORATION.TIME`, `OUTAGE.START.DATE`, and `OUTAGE.START.TIME`), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.
 
@@ -11,9 +12,11 @@ At this initial stage, we identified several relevant columns: `MONTH`, `YEAR`, 
 
 This selection of columns, derived from the dataset and the attached screenshot, will guide our investigation into understanding and predicting the extent of customer impact during power outages.
 
-**Step 2: Data Cleaning and Exploratory Data Analysis**
+# Data Cleaning and Exploratory Data Analysis
 
 *Data Cleaning, Univariate Analysis, and Imputation:*
+
+## Data Cleaning
 
 During our data cleaning, we identified and removed two columns that lacked meaningful information: `Variables` (which contained only NaN values) and `OBS` (which duplicated the dataframe’s indices). We also merged related date and time columns. Specifically, `OUTAGE.START.DATE` and `OUTAGE.START.TIME` were combined into a single column capturing both the date and time of the outage’s start. Similarly, `OUTAGE.RESTORATION.DATE` and `OUTAGE.RESTORATION.TIME` were merged into a single column capturing the date and time when the outage was restored. We named these new columns `starttime_str` and `endtime_str` and dropped the original date/time columns to avoid multicollinearity. Using `pd.DataFrame`, we extracted the day and time from these combined columns.
 
