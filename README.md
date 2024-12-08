@@ -4,13 +4,27 @@ By Serena Chen & Andy Guo
 
 # Introduction
 
-The "Power Outages" dataset provides information on power outages from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (`variable` and `OBS`) and merging date and time fields (`OUTAGE.RESTORATION.DATE`, `OUTAGE.RESTORATION.TIME`, `OUTAGE.START.DATE`, and `OUTAGE.START.TIME`), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.
+In this project, we are analysing and make prediction base on the "Power Outages" dataset. This dataset provides information on power outages in US from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (`variable` and `OBS`) and merging date and time fields (`OUTAGE.RESTORATION.DATE`, `OUTAGE.RESTORATION.TIME`, `OUTAGE.START.DATE`, and `OUTAGE.START.TIME`), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.
 
-Our work focuses on estimating the number of customers affected by a power outage. We consider this a key metric for evaluating outage severity, as it directly influences the resources required for recovery. Understanding which factors are associated with a higher number of affected customers can help local authorities better prepare for future outages. Although megawatts lost (`DEMAND.LOSS.MW`) could be important, that column has more than half of its entries missing, making it less suitable for prediction.
+Our work focuses on estimating the duration of power outage. We consider this a key metric for evaluating outage severity, as it directly influences the resources required for recovery. Understanding which factors are associated with a longer outage duration can help local authorities better prepare for future outages and reduce losses for power outage. Although megawatts lost (`DEMAND.LOSS.MW`) could be important, that column has more than half of its entries missing, making it less suitable for prediction.
 
-At this initial stage, we identified several relevant columns: `MONTH`, `YEAR`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `ANOMALY.LEVEL`, `CAUSE.CATEGORY`, `OUTAGE.DURATION`, `DEMAND.LOSS.MW`, and `CUSTOMERS.AFFECTED`. Among these, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, and `CAUSE.CATEGORY` are categorical variables that provide context (e.g., climate conditions like `normal` or `cold`, regions like `east north central`, and causes like `severe weather` or `intentional attack`). The numerical variables include `MONTH` and `YEAR` for timing, `ANOMALY.LEVEL` (ranging from -1.6 to 2.3), `OUTAGE.DURATION` (minutes per outage), `DEMAND.LOSS.MW` (megawatts lost), and `CUSTOMERS.AFFECTED` (number of customers impacted).
+At this initial stage, we identified several relevant columns: `MONTH`, `YEAR`, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, `ANOMALY.LEVEL`, `CAUSE.CATEGORY`, `OUTAGE.DURATION`, `DEMAND.LOSS.MW`, and `CUSTOMERS.AFFECTED`. Among these, `CLIMATE.REGION`, `CLIMATE.CATEGORY`, and `CAUSE.CATEGORY` are categorical variables that provide context (e.g., climate conditions like `normal` or `cold`, regions like `east north central`, and causes like `severe weather` or `intentional attack`). The numerical variables include `MONTH` and `YEAR` for timing, `ANOMALY.LEVEL` (ranging from -1.6 to 2.3), `OUTAGE.DURATION` (minutes per outage), `DEMAND.LOSS.MW` (megawatts lost), and `CUSTOMERS.AFFECTED` (number of customers impacted). The relevant dataframe has 1535 rows and 11 columns in total.
 
-This selection of columns, derived from the dataset and the attached screenshot, will guide our investigation into understanding and predicting the extent of customer impact during power outages.
+| Variable name       | Description                                                                                  |
+|---------------------|----------------------------------------------------------------------------------------------|
+| MONTH              | The month when the outage event occurred                                                     |
+| YEAR               | The year when the outage event occurred                                                      |
+| CLIMATE.REGION     | U.S. Climate regions as specified by National Centers for Environmental Information (9 Regions) |
+| CLIMATE.CATEGORY   | The climate episodes corresponding to the years                                              |
+| CAUSE.CATEGORY     | Categories of all the events causing the major power outages                                 |
+| OUTAGE.DURATION    | Duration of outage events (in minutes)                                                       |
+| ANOMALY.LEVEL      | The oceanic El Niño/La Niña (ONI) index referring to the cold and warm episodes by season    |
+| DEMAND.LOSS.MW     | Amount of peak demand lost during an outage event (in Megawatt)                              |
+| CUSTOMERS.AFFECTED | Number of customers affected by the power outage event                                       |
+| start_day          | The date of the outage's start                                                              |
+| start_hour         | Capturing the hour of the outage's start        
+
+This selection of columns will guide our investigation into understanding and predicting the extent of customer impact during power outages.
 
 # Data Cleaning and Exploratory Data Analysis
 
@@ -33,19 +47,19 @@ Our data cleaning include the following steps:
 
 The interested columns include:
 
-| Variable name       | Description                                                                                  |
-|---------------------|----------------------------------------------------------------------------------------------|
-| MONTH              | The month when the outage event occurred                                                     |
-| YEAR               | The year when the outage event occurred                                                      |
-| CLIMATE.REGION     | U.S. Climate regions as specified by National Centers for Environmental Information (9 Regions) |
-| CLIMATE.CATEGORY   | The climate episodes corresponding to the years                                              |
-| CAUSE.CATEGORY     | Categories of all the events causing the major power outages                                 |
-| OUTAGE.DURATION    | Duration of outage events (in minutes)                                                       |
-| ANOMALY.LEVEL      | The oceanic El Niño/La Niña (ONI) index referring to the cold and warm episodes by season    |
-| DEMAND.LOSS.MW     | Amount of peak demand lost during an outage event (in Megawatt)                              |
-| CUSTOMERS.AFFECTED | Number of customers affected by the power outage event                                       |
-| start_day          | The date of the outage's start                                                              |
-| start_hour         | Capturing the hour of the outage's start                                                    |
+| **Variable Name**   | **Unit**                                                                                   |
+|---------------------|-------------------------------------------------------------------------------------------|
+| MONTH              | Month (1–12)                                                                               |
+| YEAR               | Year (e.g., 2000–2016)                                                                     |
+| CLIMATE.REGION     | Categorical (9 regions in the U.S.)                                                        |
+| CLIMATE.CATEGORY   | Categorical (“Warm,” “Cold,” or “Normal”)                                                  |
+| CAUSE.CATEGORY     | Categorical (e.g., “Severe Weather,” “Intentional Attack”)                                 |
+| OUTAGE.DURATION    | Minutes                                                                                    |
+| ANOMALY.LEVEL      | Oceanic Niño Index (ONI), measured as a 3-month running mean                               |
+| DEMAND.LOSS.MW     | Megawatts                                                                                  |
+| CUSTOMERS.AFFECTED | Number of customers                                                                        |
+| start_day          | Date (1-31)                                                                                |
+| start_hour         | Hour (0–23)                                                                                |
 
 
 ### After the data cleaning, the dataframe is like:
@@ -178,6 +192,33 @@ The bar chart highlights that outages caused by weather have the highest mean du
 
 We might utilize this for future feature selection to improve the baseline model.
 
+## aggregates & pivot table
+
+**-Here is a pivot table for Region and Outage Duration**
+
+|    | CLIMATE.REGION     |   OUTAGE.DURATION |
+|---:|:-------------------|------------------:|
+|  0 | Central            |          2701.13  |
+|  1 | East North Central |          5352.04  |
+|  2 | Northeast          |          2991.66  |
+|  3 | Northwest          |          1284.5   |
+|  4 | South              |          2846.1   |
+|  5 | Southeast          |          2217.69  |
+|  6 | Southwest          |          1566.14  |
+|  7 | West               |          1628.33  |
+|  8 | West North Central |           696.562 |
+
+Seemingly East North Central have the highest mean OUTAGE.DURATION among the other regions
+
+**-Here is a pivot table for Climate category and Outage Duration**
+
+|    | CLIMATE.CATEGORY   |   OUTAGE.DURATION |
+|---:|:-------------------|------------------:|
+|  0 | cold               |           2656.96 |
+|  1 | normal             |           2530.98 |
+|  2 | warm               |           2817.32 |
+
+There is not obvious pattern for these two variables
 
 ## Handle missing values
 
@@ -216,3 +257,14 @@ we developed an imputation strategy informed by our exploratory analysis:
      - If a variable was **skewed**, the **median** was used for imputation.  
 
      - If a variable was **not skewed**, the **mean** was used for imputation.  
+
+# Prediction Problem
+
+We plan to predict the duration of each individual power outage occurrence in 2016, framing this as a regression problem. The response variable for this analysis is OUTAGE.DURATION, which measures the total duration of an outage in minutes. We chose this focus because the length of an outage is a critical factor for recovery planning, resource allocation, and minimizing the impact on affected communities, making it a vital metric for assessing outage severity. We choose this also because we find it correlats with many of the variables and have few missing values in the EDA section, which potentially allow us to create a better model.
+
+To evaluate the performance of our model, we will use Mean Squared Error (MSE) as the primary metric. MSE was selected because it penalizes larger errors more heavily, which is important in the context of predicting outage durations where significant underestimations or overestimations could have substantial real-world consequences. By focusing on minimizing MSE, we aim to prioritize accuracy for severe or prolonged outages.
+
+In line with the requirements, we will carefully ensure that all features included in the model are available at the time of prediction, avoiding any data leakage. Notably, we will include the variable number of customers affected as a predictor. This feature can be reasonably estimated based on the population of the outage area, which is typically known or accessible at the time of the outage.
+
+# Baseline Model
+

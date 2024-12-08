@@ -25,7 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="/assets/css/style.css?v=1e2b815082689813856252ad612a0125e7cab079">
+    <link rel="stylesheet" href="/assets/css/style.css?v=614666850effd6d5e0fae1b716735404bb32e1a5">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -57,35 +57,11 @@ By Serena Chen &amp; Andy Guo</p>
 
 <h1 id="introduction">Introduction</h1>
 
-<p>The “Power Outages” dataset provides information on power outages from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (<code class="language-plaintext highlighter-rouge">variable</code> and <code class="language-plaintext highlighter-rouge">OBS</code>) and merging date and time fields (<code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.DATE</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.TIME</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code>, and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code>), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.</p>
+<p>In this project, we are analysing and make prediction base on the “Power Outages” dataset. This dataset provides information on power outages in US from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (<code class="language-plaintext highlighter-rouge">variable</code> and <code class="language-plaintext highlighter-rouge">OBS</code>) and merging date and time fields (<code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.DATE</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.TIME</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code>, and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code>), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.</p>
 
-<p>Our work focuses on estimating the number of customers affected by a power outage. We consider this a key metric for evaluating outage severity, as it directly influences the resources required for recovery. Understanding which factors are associated with a higher number of affected customers can help local authorities better prepare for future outages. Although megawatts lost (<code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>) could be important, that column has more than half of its entries missing, making it less suitable for prediction.</p>
+<p>Our work focuses on estimating the duration of power outage. We consider this a key metric for evaluating outage severity, as it directly influences the resources required for recovery. Understanding which factors are associated with a longer outage duration can help local authorities better prepare for future outages and reduce losses for power outage. Although megawatts lost (<code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>) could be important, that column has more than half of its entries missing, making it less suitable for prediction.</p>
 
-<p>At this initial stage, we identified several relevant columns: <code class="language-plaintext highlighter-rouge">MONTH</code>, <code class="language-plaintext highlighter-rouge">YEAR</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code>, <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>, <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>, and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code>. Among these, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, and <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code> are categorical variables that provide context (e.g., climate conditions like <code class="language-plaintext highlighter-rouge">normal</code> or <code class="language-plaintext highlighter-rouge">cold</code>, regions like <code class="language-plaintext highlighter-rouge">east north central</code>, and causes like <code class="language-plaintext highlighter-rouge">severe weather</code> or <code class="language-plaintext highlighter-rouge">intentional attack</code>). The numerical variables include <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">YEAR</code> for timing, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code> (ranging from -1.6 to 2.3), <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code> (minutes per outage), <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code> (megawatts lost), and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code> (number of customers impacted).</p>
-
-<p>This selection of columns, derived from the dataset and the attached screenshot, will guide our investigation into understanding and predicting the extent of customer impact during power outages.</p>
-
-<h1 id="data-cleaning-and-exploratory-data-analysis">Data Cleaning and Exploratory Data Analysis</h1>
-
-<p><em>Data Cleaning, Univariate Analysis, and Imputation:</em></p>
-
-<h2 id="data-cleaning">Data Cleaning</h2>
-
-<p>Our data cleaning include the following steps:</p>
-
-<p>1, <strong>we identified and removed two columns that lacked meaningful information: <code class="language-plaintext highlighter-rouge">Variables</code> (which contained only NaN values) and <code class="language-plaintext highlighter-rouge">OBS</code> (which duplicated the dataframe’s indices).</strong></p>
-
-<p>2, <strong>We extracted specific information from the <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> columns. Specifically:</strong></p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_day</code>, capturing the date of the outage’s start.</li>
-  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_hour</code>, capturing the hour of the outage’s start.</li>
-  <li>The original date and time columns were dropped to avoid multicollinearity.</li>
-</ul>
-
-<p>3, <strong>Then, we drop irrelevant columns and only keeping the features we are inerested in</strong></p>
-
-<p>The interested columns include:</p>
+<p>At this initial stage, we identified several relevant columns: <code class="language-plaintext highlighter-rouge">MONTH</code>, <code class="language-plaintext highlighter-rouge">YEAR</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code>, <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>, <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>, and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code>. Among these, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, and <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code> are categorical variables that provide context (e.g., climate conditions like <code class="language-plaintext highlighter-rouge">normal</code> or <code class="language-plaintext highlighter-rouge">cold</code>, regions like <code class="language-plaintext highlighter-rouge">east north central</code>, and causes like <code class="language-plaintext highlighter-rouge">severe weather</code> or <code class="language-plaintext highlighter-rouge">intentional attack</code>). The numerical variables include <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">YEAR</code> for timing, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code> (ranging from -1.6 to 2.3), <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code> (minutes per outage), <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code> (megawatts lost), and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code> (number of customers impacted). The relevant dataframe has 1535 rows and 11 columns in total.</p>
 
 <table>
   <thead>
@@ -138,6 +114,85 @@ By Serena Chen &amp; Andy Guo</p>
     <tr>
       <td>start_hour</td>
       <td>Capturing the hour of the outage’s start</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This selection of columns will guide our investigation into understanding and predicting the extent of customer impact during power outages.</p>
+
+<h1 id="data-cleaning-and-exploratory-data-analysis">Data Cleaning and Exploratory Data Analysis</h1>
+
+<p><em>Data Cleaning, Univariate Analysis, and Imputation:</em></p>
+
+<h2 id="data-cleaning">Data Cleaning</h2>
+
+<p>Our data cleaning include the following steps:</p>
+
+<p>1, <strong>we identified and removed two columns that lacked meaningful information: <code class="language-plaintext highlighter-rouge">Variables</code> (which contained only NaN values) and <code class="language-plaintext highlighter-rouge">OBS</code> (which duplicated the dataframe’s indices).</strong></p>
+
+<p>2, <strong>We extracted specific information from the <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> columns. Specifically:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_day</code>, capturing the date of the outage’s start.</li>
+  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_hour</code>, capturing the hour of the outage’s start.</li>
+  <li>The original date and time columns were dropped to avoid multicollinearity.</li>
+</ul>
+
+<p>3, <strong>Then, we drop irrelevant columns and only keeping the features we are inerested in</strong></p>
+
+<p>The interested columns include:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Variable Name</strong></th>
+      <th><strong>Unit</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MONTH</td>
+      <td>Month (1–12)</td>
+    </tr>
+    <tr>
+      <td>YEAR</td>
+      <td>Year (e.g., 2000–2016)</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.REGION</td>
+      <td>Categorical (9 regions in the U.S.)</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.CATEGORY</td>
+      <td>Categorical (“Warm,” “Cold,” or “Normal”)</td>
+    </tr>
+    <tr>
+      <td>CAUSE.CATEGORY</td>
+      <td>Categorical (e.g., “Severe Weather,” “Intentional Attack”)</td>
+    </tr>
+    <tr>
+      <td>OUTAGE.DURATION</td>
+      <td>Minutes</td>
+    </tr>
+    <tr>
+      <td>ANOMALY.LEVEL</td>
+      <td>Oceanic Niño Index (ONI), measured as a 3-month running mean</td>
+    </tr>
+    <tr>
+      <td>DEMAND.LOSS.MW</td>
+      <td>Megawatts</td>
+    </tr>
+    <tr>
+      <td>CUSTOMERS.AFFECTED</td>
+      <td>Number of customers</td>
+    </tr>
+    <tr>
+      <td>start_day</td>
+      <td>Date (1-31)</td>
+    </tr>
+    <tr>
+      <td>start_hour</td>
+      <td>Hour (0–23)</td>
     </tr>
   </tbody>
 </table>
@@ -355,6 +410,100 @@ By Serena Chen &amp; Andy Guo</p>
 
 <p>We might utilize this for future feature selection to improve the baseline model.</p>
 
+<h2 id="aggregates--pivot-table">aggregates &amp; pivot table</h2>
+
+<p><strong>-Here is a pivot table for Region and Outage Duration</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right"> </th>
+      <th style="text-align: left">CLIMATE.REGION</th>
+      <th style="text-align: right">OUTAGE.DURATION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">0</td>
+      <td style="text-align: left">Central</td>
+      <td style="text-align: right">2701.13</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: right">5352.04</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">2</td>
+      <td style="text-align: left">Northeast</td>
+      <td style="text-align: right">2991.66</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">3</td>
+      <td style="text-align: left">Northwest</td>
+      <td style="text-align: right">1284.5</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">4</td>
+      <td style="text-align: left">South</td>
+      <td style="text-align: right">2846.1</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">5</td>
+      <td style="text-align: left">Southeast</td>
+      <td style="text-align: right">2217.69</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">6</td>
+      <td style="text-align: left">Southwest</td>
+      <td style="text-align: right">1566.14</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">7</td>
+      <td style="text-align: left">West</td>
+      <td style="text-align: right">1628.33</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">8</td>
+      <td style="text-align: left">West North Central</td>
+      <td style="text-align: right">696.562</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Seemingly East North Central have the highest mean OUTAGE.DURATION among the other regions</p>
+
+<p><strong>-Here is a pivot table for Climate category and Outage Duration</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right"> </th>
+      <th style="text-align: left">CLIMATE.CATEGORY</th>
+      <th style="text-align: right">OUTAGE.DURATION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">0</td>
+      <td style="text-align: left">cold</td>
+      <td style="text-align: right">2656.96</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">1</td>
+      <td style="text-align: left">normal</td>
+      <td style="text-align: right">2530.98</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">2</td>
+      <td style="text-align: left">warm</td>
+      <td style="text-align: right">2817.32</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>There is not obvious pattern for these two variables</p>
+
 <h2 id="handle-missing-values">Handle missing values</h2>
 
 <p>we developed an imputation strategy informed by our exploratory analysis:</p>
@@ -394,6 +543,17 @@ By Serena Chen &amp; Andy Guo</p>
     </ul>
   </li>
 </ul>
+
+<h1 id="prediction-problem">Prediction Problem</h1>
+
+<p>We plan to predict the duration of each individual power outage occurrence in 2016, framing this as a regression problem. The response variable for this analysis is OUTAGE.DURATION, which measures the total duration of an outage in minutes. We chose this focus because the length of an outage is a critical factor for recovery planning, resource allocation, and minimizing the impact on affected communities, making it a vital metric for assessing outage severity. We choose this also because we find it correlats with many of the variables and have few missing values in the EDA section, which potentially allow us to create a better model.</p>
+
+<p>To evaluate the performance of our model, we will use Mean Squared Error (MSE) as the primary metric. MSE was selected because it penalizes larger errors more heavily, which is important in the context of predicting outage durations where significant underestimations or overestimations could have substantial real-world consequences. By focusing on minimizing MSE, we aim to prioritize accuracy for severe or prolonged outages.</p>
+
+<p>In line with the requirements, we will carefully ensure that all features included in the model are available at the time of prediction, avoiding any data leakage. Notably, we will include the variable number of customers affected as a predictor. This feature can be reasonably estimated based on the population of the outage area, which is typically known or accessible at the time of the outage.</p>
+
+<h1 id="baseline-model">Baseline Model</h1>
+
 
 
       <footer class="site-footer">
