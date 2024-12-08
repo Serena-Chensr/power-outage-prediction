@@ -305,7 +305,78 @@ For this model we have:
 **Linear Regression (`columntransformer`)**:
     After inputing all the values and transform variables accordingly, we fit a linear regression model. 
 
-### Baseline Model performance
-    
+### 3. Baseline Model performance
+
+####  Mean Squared Error (MSE)
+The **Mean Squared Error (MSE)** of the current model is **14,147,329.13**, which indicates that the predicted values deviate significantly from the true values. This suggests poor model performance, especially if the target variable has a smaller range. The high MSE shows that the model is not effectively minimizing the prediction errors.
+
+####  R-squared (R²)
+The **R-squared (R²)** score is **0.274**, meaning that only about **27.4%** of the variance in the target variable is explained by the model. This is relatively low and suggests that the model is not capturing the relationship between the features and the target variable effectively.
+
+---
+
+###  We are planning to try some of the improve strateges in our final model tuning stage
+
+####  1. Feature Selection
+The combination of high MSE and low R² might indicate that irrelevant or noisy features are included in the model. To address this:
+- We want to try Perform **LASSO regression** or other feature importance techniques to identify and select the most impactful features.
+- Remove or transform irrelevant features that might be introducing noise.
+
+---
+
+####  2. Data Cleaning
+Data quality is critical to improving the model's performance. Recommendations include:
+- **Outliers**: Identify and handle outliers in the dataset that might skew results.
+- **Missing Values**: While the `not_na_mask_test` step suggests missing data handling, further cleaning might be required, such as:
+  - Imputation with appropriate strategies (mean, median, or predictive methods).
+  - Removal of records with excessive missing data if applicable.
+
+---
+
+####  3. Hyperparameter Tuning
+- Use **Grid Search** with **cross-validation** to find the best hyperparameters for the chosen algorithm.
+- Evaluate various settings to balance bias and variance effectively.
+
+---
+
+####  4. Cross-Validation
+To ensure the model generalizes well to unseen data:
+- Implement **k-fold cross-validation** to evaluate the model's performance more robustly.
+- This will help avoid overfitting or underfitting and provide a better estimate of the model's true performance.
+
 
 # Final Model
+
+When finalizing our model, we adopted a systematic, iterative approach.
+
+## Comparison of Larger and Smaller Models
+We started by comparing larger models to smaller ones, using the same strategy to develop and optimize each. Since our baseline model was relatively small, we initially explored a larger model. This larger model incorporated all features from the dataset and applied the same imputation strategy. However, this approach resulted in a much higher mean squared error (MSE) compared to our baseline model.
+
+## Feature Dropping and Debugging Challenges
+To address this, we attempted to drop irrelevant columns after one-hot encoding. While we successfully identified columns to exclude, incorporating a transformer to drop these columns introduced bugs. Interestingly, Yihan had previously implemented a similar column-dropping approach (based on Lasso regression coefficients of 0) in Homework 10, Question 3.4, without any issues. Despite debugging for nearly two hours, we were unable to resolve the errors and decided to pivot toward using a feature selection method instead.
+
+Using this approach, we discovered that selecting the top 10 features yielded the best performance for the larger model—similar to the number of features in our original smaller model. Nevertheless, the MSE remained higher than the baseline.
+
+## Interaction Terms and Reverting to the Smaller Model
+Next, we experimented with adding interaction terms, guided by correlation coefficients and mutual information scores. Unfortunately, this again led to debugging challenges, prompting us to shift our focus back to the smaller model. This decision was supported by two observations:
+1. The smaller model consistently achieved lower MSE.
+2. It was easier to apply meaningful feature engineering to a simpler model.
+
+## Improvements to the Smaller Model
+We began by incorporating **GridSearchCV** into the baseline model. Interestingly, this increased the MSE by approximately 12%. We then added **polynomial features** and applied **feature selection**, which reduced the MSE back to levels comparable to the baseline. Attempting to reintroduce interaction terms, we encountered the same debugging challenges as with the larger models. This reinforced our conclusion that smaller models were better suited for our task.
+
+## Final Feature Selection
+We decided to drop specific columns—`Anomaly.Level`, `Month`, and `DEMAND.LOSS.MW`—from the final model. The rationale was:
+- These features had low correlation with `Outage.Duration`.
+- `DEMAND.LOSS.MW` represented post-outage data rather than a predictive feature.
+
+## Final Model Components
+Our final model incorporated the following enhancements:
+1. **Cross-validation**: To ensure robust evaluation.
+2. **Ridge regression**: As a regularized regression approach.
+3. **Polynomial features**: To capture non-linear relationships.
+4. **Feature selection**: To reduce dimensionality and focus on the most informative features.
+5. **Feature elimination**: Dropping distracting columns (`Month`, `Anomaly.Level`, `DEMAND.LOSS.MW`).
+
+## Results
+These adjustments improved the model's performance by approximately **10%** compared to the baseline. The optimal ridge regression coefficient was **2**, and the best number of numerical features selected (after applying polynomial features and feature elimination) was **5**.
