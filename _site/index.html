@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Power Outage Influence Prediction | Predict Power Outage Influence</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Power Outage Influence Prediction" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This is a homework for EECS 398 at U-M" />
+<meta property="og:description" content="This is a homework for EECS 398 at U-M" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Predict Power Outage Influence" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Power Outage Influence Prediction" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"This is a homework for EECS 398 at U-M","headline":"Power Outage Influence Prediction","name":"Predict Power Outage Influence","url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=1e2b815082689813856252ad612a0125e7cab079">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+    <header class="page-header" role="banner">
+      <h1 class="project-name">Power Outage Influence Prediction</h1>
+      <h2 class="project-tagline">This is a homework for EECS 398 at U-M</h2>
+      
+        <a href="https://github.com/Serena-Chensr/power-outage-prediction" class="btn">View on GitHub</a>
+      
+      
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <h1 id="power-outage-influence-prediction">Power Outage Influence Prediction</h1>
+<p>This is a homework for EECS 398 at U-M
+By Serena Chen &amp; Andy Guo</p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>The “Power Outages” dataset provides information on power outages from 2000 to 2016, including details about their timing, location, causes, and effects. Initially, it contained 1,535 rows and 57 columns. After removing redundant columns (<code class="language-plaintext highlighter-rouge">variable</code> and <code class="language-plaintext highlighter-rouge">OBS</code>) and merging date and time fields (<code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.DATE</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.RESTORATION.TIME</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code>, and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code>), we reduced the dataset to 53 meaningful columns. We then extracted the day and time from these merged columns, resulting in a total of 55 meaningful columns.</p>
+
+<p>Our work focuses on estimating the number of customers affected by a power outage. We consider this a key metric for evaluating outage severity, as it directly influences the resources required for recovery. Understanding which factors are associated with a higher number of affected customers can help local authorities better prepare for future outages. Although megawatts lost (<code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>) could be important, that column has more than half of its entries missing, making it less suitable for prediction.</p>
+
+<p>At this initial stage, we identified several relevant columns: <code class="language-plaintext highlighter-rouge">MONTH</code>, <code class="language-plaintext highlighter-rouge">YEAR</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code>, <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code>, <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>, <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code>, and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code>. Among these, <code class="language-plaintext highlighter-rouge">CLIMATE.REGION</code>, <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code>, and <code class="language-plaintext highlighter-rouge">CAUSE.CATEGORY</code> are categorical variables that provide context (e.g., climate conditions like <code class="language-plaintext highlighter-rouge">normal</code> or <code class="language-plaintext highlighter-rouge">cold</code>, regions like <code class="language-plaintext highlighter-rouge">east north central</code>, and causes like <code class="language-plaintext highlighter-rouge">severe weather</code> or <code class="language-plaintext highlighter-rouge">intentional attack</code>). The numerical variables include <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">YEAR</code> for timing, <code class="language-plaintext highlighter-rouge">ANOMALY.LEVEL</code> (ranging from -1.6 to 2.3), <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code> (minutes per outage), <code class="language-plaintext highlighter-rouge">DEMAND.LOSS.MW</code> (megawatts lost), and <code class="language-plaintext highlighter-rouge">CUSTOMERS.AFFECTED</code> (number of customers impacted).</p>
+
+<p>This selection of columns, derived from the dataset and the attached screenshot, will guide our investigation into understanding and predicting the extent of customer impact during power outages.</p>
+
+<h1 id="data-cleaning-and-exploratory-data-analysis">Data Cleaning and Exploratory Data Analysis</h1>
+
+<p><em>Data Cleaning, Univariate Analysis, and Imputation:</em></p>
+
+<h2 id="data-cleaning">Data Cleaning</h2>
+
+<p>Our data cleaning include the following steps:</p>
+
+<p>1, <strong>we identified and removed two columns that lacked meaningful information: <code class="language-plaintext highlighter-rouge">Variables</code> (which contained only NaN values) and <code class="language-plaintext highlighter-rouge">OBS</code> (which duplicated the dataframe’s indices).</strong></p>
+
+<p>2, <strong>We extracted specific information from the <code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> and <code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> columns. Specifically:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.DATE</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_day</code>, capturing the date of the outage’s start.</li>
+  <li><code class="language-plaintext highlighter-rouge">OUTAGE.START.TIME</code> was split to create a new column named <code class="language-plaintext highlighter-rouge">start_hour</code>, capturing the hour of the outage’s start.</li>
+  <li>The original date and time columns were dropped to avoid multicollinearity.</li>
+</ul>
+
+<p>3, <strong>Then, we drop irrelevant columns and only keeping the features we are inerested in</strong></p>
+
+<p>The interested columns include:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MONTH</td>
+      <td>The month when the outage event occurred</td>
+    </tr>
+    <tr>
+      <td>YEAR</td>
+      <td>The year when the outage event occurred</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.REGION</td>
+      <td>U.S. Climate regions as specified by National Centers for Environmental Information (9 Regions)</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.CATEGORY</td>
+      <td>The climate episodes corresponding to the years</td>
+    </tr>
+    <tr>
+      <td>CAUSE.CATEGORY</td>
+      <td>Categories of all the events causing the major power outages</td>
+    </tr>
+    <tr>
+      <td>OUTAGE.DURATION</td>
+      <td>Duration of outage events (in minutes)</td>
+    </tr>
+    <tr>
+      <td>ANOMALY.LEVEL</td>
+      <td>The oceanic El Niño/La Niña (ONI) index referring to the cold and warm episodes by season</td>
+    </tr>
+    <tr>
+      <td>DEMAND.LOSS.MW</td>
+      <td>Amount of peak demand lost during an outage event (in Megawatt)</td>
+    </tr>
+    <tr>
+      <td>CUSTOMERS.AFFECTED</td>
+      <td>Number of customers affected by the power outage event</td>
+    </tr>
+    <tr>
+      <td>start_day</td>
+      <td>The date of the outage’s start</td>
+    </tr>
+    <tr>
+      <td>start_hour</td>
+      <td>Capturing the hour of the outage’s start</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="after-the-data-cleaning-the-dataframe-is-like">After the data cleaning, the dataframe is like:</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right">MONTH</th>
+      <th style="text-align: right">YEAR</th>
+      <th style="text-align: left">CLIMATE.REGION</th>
+      <th style="text-align: left">CLIMATE.CATEGORY</th>
+      <th style="text-align: right">ANOMALY.LEVEL</th>
+      <th style="text-align: left">CAUSE.CATEGORY</th>
+      <th style="text-align: right">OUTAGE.DURATION</th>
+      <th style="text-align: right">DEMAND.LOSS.MW</th>
+      <th style="text-align: right">CUSTOMERS.AFFECTED</th>
+      <th style="text-align: right">start_day</th>
+      <th style="text-align: right">start_hour</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">7</td>
+      <td style="text-align: right">2011</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: left">normal</td>
+      <td style="text-align: right">-0.3</td>
+      <td style="text-align: left">severe weather</td>
+      <td style="text-align: right">3060</td>
+      <td style="text-align: right">nan</td>
+      <td style="text-align: right">70000</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">17</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">5</td>
+      <td style="text-align: right">2014</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: left">normal</td>
+      <td style="text-align: right">-0.1</td>
+      <td style="text-align: left">intentional attack</td>
+      <td style="text-align: right">1</td>
+      <td style="text-align: right">nan</td>
+      <td style="text-align: right">nan</td>
+      <td style="text-align: right">11</td>
+      <td style="text-align: right">18</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">10</td>
+      <td style="text-align: right">2010</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: left">cold</td>
+      <td style="text-align: right">-1.5</td>
+      <td style="text-align: left">severe weather</td>
+      <td style="text-align: right">3000</td>
+      <td style="text-align: right">nan</td>
+      <td style="text-align: right">70000</td>
+      <td style="text-align: right">26</td>
+      <td style="text-align: right">20</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">6</td>
+      <td style="text-align: right">2012</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: left">normal</td>
+      <td style="text-align: right">-0.1</td>
+      <td style="text-align: left">severe weather</td>
+      <td style="text-align: right">2550</td>
+      <td style="text-align: right">nan</td>
+      <td style="text-align: right">68200</td>
+      <td style="text-align: right">19</td>
+      <td style="text-align: right">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">7</td>
+      <td style="text-align: right">2015</td>
+      <td style="text-align: left">East North Central</td>
+      <td style="text-align: left">warm</td>
+      <td style="text-align: right">1.2</td>
+      <td style="text-align: left">severe weather</td>
+      <td style="text-align: right">1740</td>
+      <td style="text-align: right">250</td>
+      <td style="text-align: right">250000</td>
+      <td style="text-align: right">18</td>
+      <td style="text-align: right">2</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="univariate-analysis-and-interesting-aggregates">Univariate Analysis and Interesting Aggregates:</h2>
+
+<ul>
+  <li>
+    <p>Here is the cause category recorded in the dataset, we can see the two major reasons of the power outage is ‘severe weather’ and ‘intentional attack’.</p>
+
+    <iframe src="assets/CAUSE.CATEGORY VS Outage Duration.html" width="800" height="600" frameborder="0" style="margin-left: 10px;"></iframe>
+  </li>
+  <li>
+    <p>Next we want to explore the distribution of OUTAGE.DURATION variable, here is a histogram of power outage duration in hours:</p>
+  </li>
+</ul>
+
+<iframe src="assets/outage_distribution.html" width="800" height="600" frameborder="0" style="margin-left: 10px;"></iframe>
+
+<p>About 80% of the power outages ended within 75 hours.</p>
+
+<ul>
+  <li>
+    <p>Here we have the number of Outage appear for each year and month.</p>
+
+    <iframe src="assets/year_count.html" width="800" height="400" frameborder="0" style="margin-right: 10px;"></iframe>
+
+    <iframe src="assets/month_count.html" width="800" height="400" frameborder="0" style="margin-left: 10px;"></iframe>
+  </li>
+</ul>
+
+<p>We can see a peak of outage in 2011, and the peak month for power outage is June.</p>
+
+<ul>
+  <li>And we want to find whether there is any geographical pattern for the number of power outage.</li>
+</ul>
+
+<iframe src="assets/map.html" width="800" height="600" frameborder="0"></iframe>
+
+<p><strong>- What’s the shape for numerical variables?</strong></p>
+<h3 id="skewness-table-for-key-variables">Skewness Table for Key Variables</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable Name</th>
+      <th>Skewness</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MONTH</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>YEAR</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.REGION</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>CLIMATE.CATEGORY</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>CAUSE.CATEGORY</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>OUTAGE.DURATION</td>
+      <td>Right-skewed</td>
+    </tr>
+    <tr>
+      <td>ANOMALY.LEVEL</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>DEMAND.LOSS.MW</td>
+      <td>Right-skewed</td>
+    </tr>
+    <tr>
+      <td>CUSTOMERS.AFFECTED</td>
+      <td>Right-skewed</td>
+    </tr>
+    <tr>
+      <td>start_day</td>
+      <td>Neutral</td>
+    </tr>
+    <tr>
+      <td>start_hour</td>
+      <td>Neutral</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="bivariate-analysis-and-interesting-aggregates">Bivariate Analysis and Interesting Aggregates:</h2>
+
+<p>We proceeded with the nine columns identified in the introduction. We separated them into categorical and numerical columns and applied one-hot encoding to the categorical variables. Afterward, we calculated correlation coefficients using a correlation matrix and selected the columns most strongly correlated with <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>.</p>
+
+<p><strong>-  here we want to decide the relationship between Customers Affected and Outage Duration</strong></p>
+<iframe src="assets/Customers Affected VS Outage Duration.html" width="800" height="500" frameborder="0"></iframe>
+
+<p>The scatter plot reveals a concentration of data points where outage durations are short (below 20k minutes) and the number of customers affected is relatively small (under 500k). There are fewer instances of prolonged outages (exceeding 60k minutes), and these tend to involve varying numbers of customers, up to a maximum of approximately 3 million.</p>
+
+<p><strong>- here we want to decide the relationship between Month and Outage Duration</strong></p>
+<iframe src="assets/Month VS Outage Duration.html" width="800" height="500" frameborder="0"></iframe>
+
+<p>Outage durations are scattered across all months, with no clear concentration in any particular month. Most outages last less than 20k minutes, and there are only a few extreme outliers with durations exceeding 80k minutes. Surprisingly, the distribution of outage durations across the months suggests that outages occur consistently throughout the year, without any strong seasonal trend affecting outage duration.</p>
+
+<p><strong>- here we want to decide the relationship between Cause of outage and Mean Outage Duration</strong></p>
+<iframe src="assets/Cause VS Outage Duration.html" width="800" height="500" frameborder="0"></iframe>
+
+<p>The bar chart highlights that outages caused by weather have the highest mean duration, followed by equipment failure. Other causes such as maintenance, vandalism, and other categories result in significantly shorter outage durations on average.</p>
+
+<p><strong>- What is the correlation between One-hot Encoded variables and <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>?</strong></p>
+<ul>
+  <li>We utilized a correlation matrix to identify the top 30 features most correlated with <code class="language-plaintext highlighter-rouge">OUTAGE.DURATION</code>(a potential response variable that we are interested in) after one-hot encoding of the categorical variables.</li>
+</ul>
+
+<p><strong>- Here is the correlation matrix of variable with the top-5 correlation value</strong></p>
+
+<div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 50vh; overflow: hidden;">
+  <iframe src="assets/corr_matrix.svg" style="width: 100%; height: 100%; border: none; object-fit: contain;" title="Correlation Matrix">
+  </iframe>
+</div>
+
+<p>We might utilize this for future feature selection to improve the baseline model.</p>
+
+<h2 id="handle-missing-values">Handle missing values</h2>
+
+<p>we developed an imputation strategy informed by our exploratory analysis:</p>
+
+<p><em>Categorical Variables</em></p>
+<ul>
+  <li>Variables like <code class="language-plaintext highlighter-rouge">CLIMATE_REGION</code> and <code class="language-plaintext highlighter-rouge">CLIMATE.CATEGORY</code> were analyzed using univariate analysis, which showed relatively even distributions across their subcategories(i.e., no single category dominated the data significantly).</li>
+</ul>
+
+<div style="display: flex; justify-content: space-around; align-items: center;">
+
+  <iframe src="assets/CLIMATE.CATEGORY VS Outage Duration.html" width="550" height="300" frameborder="0" style="margin-right: 10px;"></iframe>
+
+  <iframe src="assets/CLIMATE.REGION VS Outage Duration.html" width="550" height="300" frameborder="0" style="margin-left: 10px;"></iframe>
+
+</div>
+
+<ul>
+  <li>As a result for these categorical variables, we applied probabilistic imputation to address missing values.</li>
+</ul>
+
+<p><em>Numerical Variables</em></p>
+<ul>
+  <li>
+    <p>For variables such as <code class="language-plaintext highlighter-rouge">MONTH</code>, <code class="language-plaintext highlighter-rouge">YEAR</code>, <code class="language-plaintext highlighter-rouge">start_day</code>, and <code class="language-plaintext highlighter-rouge">start_hour</code>, probabilistic imputation was used.</p>
+  </li>
+  <li>
+    <p>For other numerical variables, we examined their distributions:</p>
+
+    <ul>
+      <li>
+        <p>If a variable was <strong>skewed</strong>, the <strong>median</strong> was used for imputation.</p>
+      </li>
+      <li>
+        <p>If a variable was <strong>not skewed</strong>, the <strong>mean</strong> was used for imputation.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+      <footer class="site-footer">
+        
+          <span class="site-footer-owner"><a href="https://github.com/Serena-Chensr/power-outage-prediction">power-outage-prediction</a> is maintained by <a href="https://github.com/Serena-Chensr">Serena-Chensr</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+  </body>
+</html>
