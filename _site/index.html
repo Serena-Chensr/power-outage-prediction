@@ -25,7 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="/assets/css/style.css?v=614666850effd6d5e0fae1b716735404bb32e1a5">
+    <link rel="stylesheet" href="/assets/css/style.css?v=623fafc237562881292b3d2fcd5f14439230e17f">
     <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
 
 <!-- Setup Google Analytics -->
@@ -554,6 +554,57 @@ By Serena Chen &amp; Andy Guo</p>
 
 <h1 id="baseline-model">Baseline Model</h1>
 
+<p>For this model we have:</p>
+
+<h3 id="1-features-in-the-model">1. Features in the Model</h3>
+<ol>
+  <li><strong>Categorical Variables (Nominal)</strong>:
+    <ul>
+      <li><strong>CLIMATE.REGION</strong>: Represents the geographical climate region.</li>
+      <li><strong>CLIMATE.CATEGORY</strong>: Indicates climate episodes such as “Warm,” “Cold,” or “Normal.”</li>
+      <li><strong>CAUSE.CATEGORY</strong>: Categories of events causing power outages (e.g., “Severe Weather,” “Intentional Attack”).</li>
+    </ul>
+  </li>
+  <li><strong>Quantitative Variables</strong>:
+    <ul>
+      <li><strong>MONTH</strong>: Represents the month of the outage event (1–12).</li>
+      <li><strong>YEAR</strong>: Represents the year of the outage event (e.g., 2000–2016).</li>
+      <li><strong>ANOMALY.LEVEL</strong>: Oceanic Niño Index (ONI), indicating unusual weather conditions.</li>
+      <li><strong>CUSTOMERS.AFFECTED</strong>: The number of customers impacted by the outage, which can be estimated based on the population of the affected area.</li>
+      <li><strong>DEMAND.LOSS.MW</strong>: Amount of peak demand lost during the outage (in megawatts).</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="2-pipeline-steps">2. Pipeline Steps</h3>
+
+<p align="center"> <b>The following is a pipeline of our baseline model</b></p>
+
+<iframe src="assets/pipeline.png" style="width: 60%; height: 300px; border: none; object-fit: contain; margin: auto; display: block;" title="Pipeline Visualization">
+</iframe>
+
+<p><strong>Preprocessing Pipeline (<code class="language-plaintext highlighter-rouge">columntransformer</code>)</strong>:</p>
+<ul>
+  <li><strong>Categorical variables (<code class="language-plaintext highlighter-rouge">pipeline-1</code>)</strong>:
+    <ul>
+      <li><strong>FunctionTransformer</strong>: Imputes missing values for categorical variables based on their observed probabilities in the training data. This step ensures that missing values are replaced with plausible categories based on the distribution of each feature.</li>
+      <li><strong>OneHotEncoder</strong>: Converts categorical variables into binary (one-hot) encoded features. Unknown categories during inference are ignored, and the first category is dropped to avoid multicollinearity.</li>
+    </ul>
+  </li>
+  <li><strong>Numerical variables (<code class="language-plaintext highlighter-rouge">pipeline-2</code>)</strong>:
+    <ul>
+      <li><strong>FunctionTransformer</strong>: Imputes missing values for numerical variables using either the mean or median, depending on the skewness of the distribution. This ensures robust imputation for both symmetric and skewed distributions.</li>
+      <li><strong>StandardScaler</strong>: Standardizes numerical variables by centering them to a mean of 0 and scaling them to a standard deviation of 1. This step is critical for models like Linear Regression that are sensitive to feature scaling.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Linear Regression (<code class="language-plaintext highlighter-rouge">columntransformer</code>)</strong>:
+    After inputing all the values and transform variables accordingly, we fit a linear regression model.</p>
+
+<h3 id="baseline-model-performance">Baseline Model performance</h3>
+
+<h1 id="final-model">Final Model</h1>
 
 
       <footer class="site-footer">

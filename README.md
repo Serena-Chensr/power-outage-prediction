@@ -268,3 +268,44 @@ In line with the requirements, we will carefully ensure that all features includ
 
 # Baseline Model
 
+For this model we have:
+
+### 1. Features in the Model
+1. **Categorical Variables (Nominal)**:
+   - **CLIMATE.REGION**: Represents the geographical climate region.
+   - **CLIMATE.CATEGORY**: Indicates climate episodes such as "Warm," "Cold," or "Normal."
+   - **CAUSE.CATEGORY**: Categories of events causing power outages (e.g., "Severe Weather," "Intentional Attack").
+
+2. **Quantitative Variables**:
+   - **MONTH**: Represents the month of the outage event (1–12).
+   - **YEAR**: Represents the year of the outage event (e.g., 2000–2016).
+   - **ANOMALY.LEVEL**: Oceanic Niño Index (ONI), indicating unusual weather conditions.
+   - **CUSTOMERS.AFFECTED**: The number of customers impacted by the outage, which can be estimated based on the population of the affected area.
+   - **DEMAND.LOSS.MW**: Amount of peak demand lost during the outage (in megawatts).
+
+### 2. Pipeline Steps
+
+<p align="center"> <b>The following is a pipeline of our baseline model</b></p>
+
+<iframe
+    src="assets/pipeline.png"
+    style="width: 60%; height: 300px; border: none; object-fit: contain; margin: auto; display: block;"
+    title="Pipeline Visualization">
+</iframe>
+
+**Preprocessing Pipeline (`columntransformer`)**:
+   - **Categorical variables (`pipeline-1`)**:
+     - **FunctionTransformer**: Imputes missing values for categorical variables based on their observed probabilities in the training data. This step ensures that missing values are replaced with plausible categories based on the distribution of each feature.
+     - **OneHotEncoder**: Converts categorical variables into binary (one-hot) encoded features. Unknown categories during inference are ignored, and the first category is dropped to avoid multicollinearity.
+
+   - **Numerical variables (`pipeline-2`)**:
+     - **FunctionTransformer**: Imputes missing values for numerical variables using either the mean or median, depending on the skewness of the distribution. This ensures robust imputation for both symmetric and skewed distributions.
+     - **StandardScaler**: Standardizes numerical variables by centering them to a mean of 0 and scaling them to a standard deviation of 1. This step is critical for models like Linear Regression that are sensitive to feature scaling.
+
+**Linear Regression (`columntransformer`)**:
+    After inputing all the values and transform variables accordingly, we fit a linear regression model. 
+
+### Baseline Model performance
+    
+
+# Final Model
